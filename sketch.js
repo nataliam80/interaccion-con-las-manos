@@ -37,7 +37,7 @@ function onModelReady() {
 function onPredictions(predictions) {
   let pinch = false;
   for (let i = 0; i < predictions.length; i++) {
-    const data = predictions[i].data;
+    const data = landmarkData(predictions[i]);
     if (!isUsable(data)) {
       continue;
     }
@@ -45,6 +45,17 @@ function onPredictions(predictions) {
     break; // one hand is enough to drive the circle
   }
   targetSize = pinch ? MAX_SIZE : MIN_SIZE;
+}
+
+function landmarkData(prediction) {
+  // ml5 exposes the landmarks under `data`; some versions use `landmarks`.
+  if (prediction && prediction.data) {
+    return prediction.data;
+  }
+  if (prediction && prediction.landmarks) {
+    return prediction.landmarks;
+  }
+  return null;
 }
 
 function isPinch(data) {
