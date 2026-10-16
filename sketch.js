@@ -25,9 +25,37 @@ let size = MIN_SIZE; // smoothed every frame toward the target
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+
+  // Create the webcam element and request camera permission.
   webcam = document.createElement('video');
   webcam.setAttribute('playsinline', 'true');
-  handpose = ml5.handpose(webcam, onModelReady);
+  webcam.setAttribute('autoplay', 'true');
+  webcam.setAttribute('muted', 'true');
+
+  // Small camera preview shown in the top-left corner.
+  webcam.style.position = 'absolute';
+  webcam.style.top = '10px';
+  webcam.style.left = '10px';
+  webcam.style.width = '160px';
+  webcam.style.height = '120px';
+  webcam.style.border = '2px solid #fff';
+  webcam.style.borderRadius = '8px';
+  webcam.style.background = '#000';
+  webcam.style.zIndex = '10';
+  document.body.appendChild(webcam);
+
+  navigator.mediaDevices
+    .getUserMedia({ video: true })
+    .then((stream) => {
+      webcam.srcObject = stream;
+      handpose = ml5.handpose(webcam, onModelReady);
+    })
+    .catch((err) => {
+      console.error('Camera access denied or unavailable:', err);
+      alert(
+        'No se pudo acceder a la cámara. Permite el uso de la cámara cuando el navegador lo pida. Si abres el archivo directamente (file://), algunos navegadores exigen servir la carpeta con un servidor local (por ejemplo `python -m http.server`).'
+      );
+    });
 }
 
 function onModelReady() {
