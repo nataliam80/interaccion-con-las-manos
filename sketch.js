@@ -19,12 +19,15 @@ const PINCH_RANGE = 70; // pixels: thumb and index almost touching
 const DARK = [18, 18, 24];
 
 let handpose;
+let webcam;
 let targetSize = MIN_SIZE;
 let size = MIN_SIZE; // smoothed every frame toward the target
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  handpose = ml5.handpose(video, onModelReady);
+  webcam = document.createElement('video');
+  webcam.setAttribute('playsinline', 'true');
+  handpose = ml5.handpose(webcam, onModelReady);
 }
 
 function onModelReady() {
